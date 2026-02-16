@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AmbleBeats - Turn Movement into Melody</title>
+  <meta name="description" content="AmbleBeats brings joy to children through our walking piano experience. Watch kids create music with every step.">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#26D0CE',
+            coral: '#FF8B6D',
+            pink: '#FF8FA3',
+            yellow: '#FFD93D',
+            green: '#6BCB77',
+            card: '#FFFFFF',
+            background: '#F0FDFA',
+            foreground: '#1A1A2E',
+            muted: '#64748B',
+          },
+          fontFamily: {
+            display: ['Fredoka', 'sans-serif'],
+            body: ['Inter', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    h1, h2, h3, h4, h5, h6 { font-family: 'Fredoka', sans-serif; }
+    
+    .gradient-hero {
+      background: linear-gradient(135deg, #F0FDFA 0%, #CCFBF1 50%, #FEE2E2 100%);
+    }
+    
+    .text-gradient {
+      background: linear-gradient(135deg, #14B8A6, #FF6B6B);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .shadow-card {
+      box-shadow: 0 4px 20px rgba(20, 184, 166, 0.1);
+    }
+    
+    .btn-cta {
+      background: linear-gradient(135deg, #14B8A6 0%, #0D9488 100%);
+      box-shadow: 0 4px 15px rgba(20, 184, 166, 0.4);
+      transition: all 0.3s ease;
+    }
+    
+    .btn-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(20, 184, 166, 0.5);
+    }
+    .piano-key {
+      transition: all 0.2s ease;
+    }
+    
+    .piano-key:hover {
+      transform: translateY(-4px);
+    }
+    
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+    
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 10px rgba(255, 107, 107, 0.5); }
+      50% { box-shadow: 0 0 25px rgba(255, 107, 107, 0.8); }
+    }
+    
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    .floating { animation: float 3s ease-in-out infinite; }
+    .pulse-glow { animation: pulse-glow 1.5s ease-in-out infinite; }
+    .rotating { animation: rotate 20s linear infinite; }
+    .rotating-reverse { animation: rotate 25s linear infinite reverse; }
+    
+    .robot-container { perspective: 1000px; }
+    
+    .floating-note {
+      position: absolute;
+      animation: float 2.5s ease-in-out infinite;
+      opacity: 0.7;
+      font-size: 2rem;
+    }
+    
+    .section-gradient {
+      background: linear-gradient(180deg, #FFFFFF 0%, #F0FDFA 100%);
+    }
+
+    .icon-circle {
+      width: 3.5rem;
+      height: 3.5rem;
+      border-radius: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 1.5rem;
+    }
+  </style>
+</head>
+<body class="bg-background text-foreground">
+  <!-- Navbar -->
+  <nav class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md shadow-sm">
+    <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="#home" class="flex items-center gap-3">
+        <img src="logo.jpg" alt="AmbleBeats Logo" class="h-14 w-auto rounded-lg">
+        <span class="font-display text-2xl font-bold text-primary">Amble Beats</span>
+      </a>
+      <div class="hidden md:flex items-center gap-8">
+        <a href="#home" class="text-foreground hover:text-primary transition-colors">Home</a>
+        <a href="#programs" class="text-foreground hover:text-primary transition-colors">Programs</a>
+        <a href="#gallery" class="text-foreground hover:text-primary transition-colors">Gallery</a>
+        <a href="#about" class="text-foreground hover:text-primary transition-colors">About</a>
+        <a href="#contact" class="btn-cta text-white px-6 py-2 rounded-full font-medium">Contact Us</a>
+      </div>
+      <button class="md:hidden text-2xl" onclick="toggleMobileMenu()">☰</button>
+    </div>
+    <div id="mobileMenu" class="hidden md:hidden bg-white border-t px-4 py-4">
+      <a href="#home" class="block py-2">Home</a>
+      <a href="#programs" class="block py-2">Programs</a>
+      <a href="#gallery" class="block py-2">Gallery</a>
+      <a href="#about" class="block py-2">About</a>
+      <a href="#contact" class="block py-2 text-primary font-medium">Contact Us</a>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section id="home" class="gradient-hero min-h-screen flex items-center pt-20 relative overflow-hidden">
+    
+    <div class="container mx-auto px-4 py-16 relative z-10">
+      <div class="flex flex-col lg:flex-row items-center gap-12">
+        <!-- Left Content -->
+        <div class="flex-1 text-center lg:text-left">
+          <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-8">
+            <svg class="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M18 3a1 1 0 00-1.196-.98l-10 2A1 1 0 006 5v9.114A4.369 4.369 0 005 14c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V7.82l8-1.6v5.894A4.37 4.37 0 0015 12c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V3z"/>
+            </svg>
+            <span class="text-sm font-medium text-primary">Interactive Music Experience</span>
+          </div>
+          
+          <h1 class="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+            Turn Movement into <span class="text-gradient">Melody</span>
+          </h1>
+          
+          <p class="text-lg md:text-xl text-muted max-w-xl mb-8">
+            AmbleBeats brings joy to children through our walking piano experience. 
+            Watch kids create music with every step, enhancing cognitive and physical development.
+          </p>
+          
+          <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-8">
+            <a href="#contact" class="btn-cta text-white px-8 py-4 rounded-full font-semibold text-lg">
+              Book a Demo
+            </a>
+            <button class="flex items-center justify-center gap-2 px-8 py-4 rounded-full border-2 border-primary text-primary font-semibold hover:bg-primary/5 transition-colors">
+              <span>▶</span> Watch It in Action
+            </button>
+          </div>
+        </div>
+        
+        <!-- Interactive Robot -->
+        <div class="flex-1 flex justify-center items-center robot-container" id="robotContainer">
+          <div class="relative">
+            <!-- Glowing aura -->
+            <div class="absolute inset-0 w-96 h-96 rounded-full bg-gradient-radial from-primary/30 via-coral/20 to-transparent blur-3xl"></div>
+            
+            <!-- Robot -->
+            <div class="floating relative z-10" id="robot">
+              <div class="w-80 h-80 rounded-3xl bg-gradient-to-br from-[#26D0CE] via-[#26D0CE] to-[#FF8B6D] shadow-2xl flex items-center justify-center relative" style="box-shadow: 0 20px 60px rgba(38, 208, 206, 0.4);">
+                <!-- Antenna -->
+                <div class="absolute -top-10 left-1/2 -translate-x-1/2 w-3 h-14 bg-[#26D0CE] rounded-full">
+                  <div class="absolute -top-6 left-1/2 -translate-x-1/2 w-7 h-7 rounded-full bg-[#FF6B6B]"></div>
+                </div>
+                
+                <!-- Ears (Circular) -->
+                <div class="absolute top-1/2 -left-8 -translate-y-1/2 w-14 h-14 rounded-full bg-[#26D0CE]"></div>
+                <div class="absolute top-1/2 -right-8 -translate-y-1/2 w-14 h-14 rounded-full bg-[#26D0CE]"></div>
+                
+                <!-- Face plate -->
+                <div class="w-56 h-48 rounded-3xl bg-white flex flex-col items-center justify-center gap-8" style="box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);">
+                  <!-- Eyes -->
+                  <div class="flex gap-12">
+                    <div class="w-8 h-8 rounded-full bg-black" id="leftPupil"></div>
+                    <div class="w-8 h-8 rounded-full bg-black" id="rightPupil"></div>
+                  </div>
+                  <!-- Mouth -->
+                  <div class="w-24 h-7 rounded-full bg-[#FF8B6D]" id="mouth"></div>
+                </div>
+              </div>
+              
+              <!-- Speech bubble -->
+              <div id="speechBubble" class="absolute -top-20 -right-12 bg-white rounded-2xl px-5 py-3 shadow-xl opacity-0 transition-opacity duration-300 flex items-center gap-2">
+                <span class="text-2xl">♪</span>
+                <span class="text-lg font-bold text-[#26D0CE]">Let's Play!</span>
+                <span class="text-2xl">♫</span>
+                <div class="absolute -bottom-2 left-12 w-4 h-4 bg-white rotate-45"></div>
+              </div>
+              
+              <!-- Sparkle effects -->
+              <div id="sparkles" class="absolute inset-0 pointer-events-none opacity-0 transition-opacity duration-300">
+                <div class="absolute top-8 right-4 text-yellow-300 text-2xl">✨</div>
+                <div class="absolute bottom-12 left-6 text-yellow-300 text-xl">✨</div>
+                <div class="absolute top-12 left-2 text-yellow-300 text-lg">✨</div>
+              </div>
+            </div>
+          </div>
+          <p class="absolute -bottom-8 text-sm text-muted">Click the robot to say hello!</p>
+        </div>
+      </div>
+      
+      <!-- Interactive Piano -->
+      <div class="mt-16">
+        <p class="text-center text-muted mb-4">Move your mouse over the keys to play!</p>
+        <div class="flex justify-center">
+          <div class="flex gap-1" id="piano">
+            <!-- 14 White keys with colored bottoms -->
+            <div class="piano-key relative w-16 h-40 bg-white rounded-t-lg overflow-hidden shadow-md cursor-pointer transition-all" data-note="C4">
+              <div class="absolute bottom-0 left-0 right-0 h-8 bg-[#5DD9C1] rounded-b-2xl"></div>
+            </div>
+            <div class="piano-key relative w-16 h-40 bg-white rounded-t-lg overflow-hidden shadow-md cursor-pointer transition-all" data-note="D4">
+              <div class="absolute bottom-0 left-0 right-0 h-8 bg-[#4ECDC4] rounded-b-2xl"></div>
+            </div>
+            <div class="piano-key relative w-16 h-40 bg-white rounded-t-lg overflow-hidden shadow-md cursor-pointer transition-all" data-note="E4">
+              <div class="absolute bottom-0 left-0 right-0 h-8 bg-[#FFD166] rounded-b-2xl"></div>
+            </div>
+            <div class="piano-key relative w-16 h-40 bg-white rounded-t-lg overflow-hidden shadow-md cursor-pointer transition-all" data-note="F4">
+              <div class="absolute bottom-0 left-0 right-0 h-8 bg-[#FFB088] rounded-b-2xl"></div>
+            </div>
+            <div class="piano-key relative w-16 h-40 bg-white rounded-t-lg overflow-hidden shadow-md cursor-pointer transition-all" data-note="G4">
+              <div class="absolute bottom-0 left-0 right-0 h-8 bg-[#FF9DC6] rounded-b-2xl"></div>
+            </div>
+            <div class="piano-key relative w-16 h-40 bg-white rounded-t-lg overflow-hidden shadow-md cursor-pointer transition-all" data-note="A4">
+              <div class="absolute bottom-0 left-0 right-0 h-8 bg-[#B39DDB] rounded-b-2xl"></div>
+            </div>
+            <div class="piano-key relative w-16 h-40 bg-white rounded-t-lg overflow-hidden shadow-md cursor-pointer transition-all" data-note="B4">
+              <div class="absolute bottom-0 left-0 right-0 h-8 bg-[#5DD9C1] rounded-b-2xl"></div>
+            </div>
+            <div class="piano-key relative w-16 h-40 bg-white rounded-t-lg overflow-hidden shadow-md cursor-pointer transition-all" data-note="C5">
+              <div class="absolute bottom-0 left-0 right-0 h-8 bg-[#4ECDC4] rounded-b-2xl"></div>
+            </div>
+            <div class="piano-key relative w-16 h-40 bg-white rounded-t-lg overflow-hidden shadow-md cursor-pointer transition-all" data-note="D5">
+              <div class="absolute bottom-0 left-0 right-0 h-8 bg-[#FFD166] rounded-b-2xl"></div>
+            </div>
+            <div class="piano-key relative w-16 h-40 bg-white rounded-t-lg overflow-hidden shadow-md cursor-pointer transition-all" data-note="E5">
+              <div class="absolute bottom-0 left-0 right-0 h-8 bg-[#FFB088] rounded-b-2xl"></div>
+            </div>
+            <div class="piano-key relative w-16 h-40 bg-white rounded-t-lg overflow-hidden shadow-md cursor-pointer transition-all" data-note="F5">
+              <div class="absolute bottom-0 left-0 right-0 h-8 bg-[#FF9DC6] rounded-b-2xl"></div>
+            </div>
+            <div class="piano-key relative w-16 h-40 bg-white rounded-t-lg overflow-hidden shadow-md cursor-pointer transition-all" data-note="G5">
+              <div class="absolute bottom-0 left-0 right-0 h-8 bg-[#B39DDB] rounded-b-2xl"></div>
+            </div>
+            <div class="piano-key relative w-16 h-40 bg-white rounded-t-lg overflow-hidden shadow-md cursor-pointer transition-all" data-note="A5">
+              <div class="absolute bottom-0 left-0 right-0 h-8 bg-[#5DD9C1] rounded-b-2xl"></div>
+            </div>
+            <div class="piano-key relative w-16 h-40 bg-white rounded-t-lg overflow-hidden shadow-md cursor-pointer transition-all" data-note="B5">
+              <div class="absolute bottom-0 left-0 right-0 h-8 bg-[#4ECDC4] rounded-b-2xl"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Trust Badges -->
+      <div class="flex flex-wrap justify-center gap-4 mt-12">
+        <div class="flex items-center gap-2 px-4 py-2 rounded-full bg-white shadow-card">
+          <svg class="w-5 h-5 text-green" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+          </svg>
+          <span class="text-sm font-medium">Safe for all ages</span>
+        </div>
+        <div class="flex items-center gap-2 px-4 py-2 rounded-full bg-white shadow-card">
+          <svg class="w-5 h-5 text-green" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+          </svg>
+          <span class="text-sm font-medium">Trained facilitators</span>
+        </div>
+        <div class="flex items-center gap-2 px-4 py-2 rounded-full bg-white shadow-card">
+          <svg class="w-5 h-5 text-green" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+          </svg>
+          <span class="text-sm font-medium">Inclusive design</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="py-20 bg-white">
+    <div class="container mx-auto px-4">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+        <div class="text-center p-8 rounded-2xl bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20">
+          <div class="text-4xl md:text-5xl font-display font-bold text-primary mb-2">500+</div>
+          <p class="text-muted font-medium">Children Reached</p>
+          <svg class="w-12 h-12 mx-auto mt-4 text-primary" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
+          </svg>
+        </div>
+        <div class="text-center p-8 rounded-2xl bg-gradient-to-br from-coral/5 to-coral/10 border border-coral/20">
+          <div class="text-4xl md:text-5xl font-display font-bold text-coral mb-2">50+</div>
+          <p class="text-muted font-medium">Schools & NGOs Partnered</p>
+          <svg class="w-12 h-12 mx-auto mt-4 text-coral" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"/>
+          </svg>
+        </div>
+        <div class="text-center p-8 rounded-2xl bg-gradient-to-br from-yellow/5 to-yellow/10 border border-yellow/20">
+          <div class="text-4xl md:text-5xl font-display font-bold text-yellow-600 mb-2">10,000+</div>
+          <p class="text-muted font-medium">Steps of Joy</p>
+          <svg class="w-12 h-12 mx-auto mt-4 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 0l-2 2a1 1 0 101.414 1.414L8 10.414l1.293 1.293a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Benefits Section -->
+  <section class="py-20 section-gradient">
+    <div class="container mx-auto px-4">
+      <h2 class="font-display text-3xl md:text-4xl font-bold text-center mb-4">Why Walking Piano?</h2>
+      <p class="text-muted text-center max-w-2xl mx-auto mb-12">Discover the amazing benefits of our interactive music experience</p>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+        <div class="p-6 rounded-2xl bg-white shadow-card hover:shadow-lg transition-shadow">
+          <div class="icon-circle bg-primary/10 text-primary mb-4">
+            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+          </div>
+          <h3 class="font-display font-semibold text-lg mb-2">Motor Skills</h3>
+          <p class="text-muted text-sm">Enhances coordination and physical development through playful movement</p>
+        </div>
+        <div class="p-6 rounded-2xl bg-white shadow-card hover:shadow-lg transition-shadow">
+          <div class="icon-circle bg-coral/10 text-coral mb-4">
+            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M18 3a1 1 0 00-1.196-.98l-10 2A1 1 0 006 5v9.114A4.369 4.369 0 005 14c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V7.82l8-1.6v5.894A4.37 4.37 0 0015 12c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V3z"/>
+            </svg>
+          </div>
+          <h3 class="font-display font-semibold text-lg mb-2">Music Education</h3>
+          <p class="text-muted text-sm">Makes learning music accessible, fun, and engaging for all children</p>
+        </div>
+        <div class="p-6 rounded-2xl bg-white shadow-card hover:shadow-lg transition-shadow">
+          <div class="icon-circle bg-yellow/10 text-yellow-600 mb-4">
+            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"/>
+            </svg>
+          </div>
+          <h3 class="font-display font-semibold text-lg mb-2">Teamwork</h3>
+          <p class="text-muted text-sm">Encourages group participation and collaborative play experiences</p>
+        </div>
+        <div class="p-6 rounded-2xl bg-white shadow-card hover:shadow-lg transition-shadow">
+          <div class="icon-circle bg-green/10 text-green mb-4">
+            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"/>
+            </svg>
+          </div>
+          <h3 class="font-display font-semibold text-lg mb-2">Inclusive</h3>
+          <p class="text-muted text-sm">Designed to be accessible and enjoyable for children of all abilities</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="py-20 bg-white">
+    <div class="container mx-auto px-4">
+      <h2 class="font-display text-3xl md:text-4xl font-bold text-center mb-4">How It Works</h2>
+      <p class="text-muted text-center max-w-2xl mx-auto mb-12">Three simple steps to bring musical joy to your event</p>
+      
+      <div class="flex flex-col md:flex-row items-center justify-center gap-8 max-w-4xl mx-auto">
+        <div class="flex-1 text-center p-8">
+          <div class="w-20 h-20 rounded-full bg-primary text-white text-3xl font-display font-bold flex items-center justify-center mx-auto mb-4">1</div>
+          <h3 class="font-display font-semibold text-xl mb-2">Book a Session</h3>
+          <p class="text-muted">Contact us to schedule your walking piano experience</p>
+        </div>
+        <div class="hidden md:block text-4xl text-primary">→</div>
+        <div class="flex-1 text-center p-8">
+          <div class="w-20 h-20 rounded-full bg-coral text-white text-3xl font-display font-bold flex items-center justify-center mx-auto mb-4">2</div>
+          <h3 class="font-display font-semibold text-xl mb-2">We Bring the Magic</h3>
+          <p class="text-muted">Our team sets up everything at your venue</p>
+        </div>
+        <div class="hidden md:block text-4xl text-coral">→</div>
+        <div class="flex-1 text-center p-8">
+          <div class="w-20 h-20 rounded-full bg-yellow text-foreground text-3xl font-display font-bold flex items-center justify-center mx-auto mb-4">3</div>
+          <h3 class="font-display font-semibold text-xl mb-2">Kids Create Music</h3>
+          <p class="text-muted">Watch children create melodies with every step!</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Video Section -->
+  <section class="py-20 section-gradient">
+    <div class="container mx-auto px-4">
+      <h2 class="font-display text-3xl md:text-4xl font-bold text-center mb-4">See It In Action</h2>
+      <p class="text-muted text-center max-w-2xl mx-auto mb-12">Watch the magic unfold as children create music with every step</p>
+      
+      <div class="max-w-4xl mx-auto">
+        <div class="relative rounded-2xl overflow-hidden shadow-2xl bg-gray-900 aspect-video">
+          <img src="https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=1200&h=675&fit=crop" alt="Children playing music" class="w-full h-full object-cover opacity-80">
+          <div class="absolute inset-0 flex items-center justify-center">
+            <button class="w-20 h-20 rounded-full bg-white/90 hover:bg-white flex items-center justify-center shadow-lg transition-all hover:scale-110" onclick="alert('Video player would open here!')">
+              <span class="text-primary text-4xl ml-1">▶</span>
+            </button>
+          </div>
+          <div class="absolute bottom-4 left-4 bg-black/50 backdrop-blur-sm rounded-lg px-4 py-2">
+            <p class="text-white text-sm font-medium">Walking Piano Experience - 2:30</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gallery Section -->
+  <section id="gallery" class="py-20 bg-white">
+    <div class="container mx-auto px-4">
+      <h2 class="font-display text-3xl md:text-4xl font-bold text-center mb-4">Gallery</h2>
+      <p class="text-muted text-center max-w-2xl mx-auto mb-12">Moments of joy captured from our events</p>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+        <div class="group relative rounded-2xl overflow-hidden shadow-card hover:shadow-xl transition-all">
+          <img src="https://images.unsplash.com/photo-1587654780291-39c9404d746b?w=600&h=400&fit=crop" alt="Children at school event" class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+            <p class="text-white font-medium">School Assembly Program</p>
+          </div>
+        </div>
+        <div class="group relative rounded-2xl overflow-hidden shadow-card hover:shadow-xl transition-all">
+          <img src="https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=600&h=400&fit=crop" alt="Kids playing piano" class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+            <p class="text-white font-medium">Interactive Music Session</p>
+          </div>
+        </div>
+        <div class="group relative rounded-2xl overflow-hidden shadow-card hover:shadow-xl transition-all">
+          <img src="https://images.unsplash.com/photo-1544776193-352d25ca82cd?w=600&h=400&fit=crop" alt="Community event" class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+            <p class="text-white font-medium">NGO Community Event</p>
+          </div>
+        </div>
+        <div class="group relative rounded-2xl overflow-hidden shadow-card hover:shadow-xl transition-all">
+          <img src="https://images.unsplash.com/photo-1516627145497-ae6968895b74?w=600&h=400&fit=crop" alt="Festival activation" class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+            <p class="text-white font-medium">Festival Activation</p>
+          </div>
+        </div>
+        <div class="group relative rounded-2xl overflow-hidden shadow-card hover:shadow-xl transition-all">
+          <img src="https://images.unsplash.com/photo-1507838153414-b4b713384a76?w=600&h=400&fit=crop" alt="Special education workshop" class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+            <p class="text-white font-medium">Special Education Workshop</p>
+          </div>
+        </div>
+        <div class="group relative rounded-2xl overflow-hidden shadow-card hover:shadow-xl transition-all">
+          <img src="https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=600&h=400&fit=crop" alt="Music and movement" class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+            <p class="text-white font-medium">Music & Movement</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Partners Section -->
+  <section class="py-16 bg-gray-50">
+    <div class="container mx-auto px-4">
+      <p class="text-center text-muted mb-8">Trusted by leading schools and organizations</p>
+      <div class="flex flex-wrap justify-center items-center gap-8 md:gap-12">
+        <div class="px-6 py-3 bg-white rounded-xl shadow-sm text-lg font-display font-semibold text-gray-400">Delhi Public School</div>
+        <div class="px-6 py-3 bg-white rounded-xl shadow-sm text-lg font-display font-semibold text-gray-400">Hope Foundation</div>
+        <div class="px-6 py-3 bg-white rounded-xl shadow-sm text-lg font-display font-semibold text-gray-400">Sunrise Academy</div>
+        <div class="px-6 py-3 bg-white rounded-xl shadow-sm text-lg font-display font-semibold text-gray-400">Music For All NGO</div>
+        <div class="px-6 py-3 bg-white rounded-xl shadow-sm text-lg font-display font-semibold text-gray-400">City Festival</div>
+      </div>
+    </div>
+  </section>
+
+
+  <section id="programs" class="py-20 section-gradient">
+    <div class="container mx-auto px-4">
+      <h2 class="font-display text-3xl md:text-4xl font-bold text-center mb-4">Our Programs</h2>
+      <p class="text-muted text-center max-w-2xl mx-auto mb-12">Tailored experiences for every occasion</p>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+        <div class="p-6 rounded-2xl bg-white shadow-card border-t-4 border-primary">
+          <div class="icon-circle bg-primary/10 text-primary mb-4">
+            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"/>
+            </svg>
+          </div>
+          <h3 class="font-display font-semibold text-xl mb-2">School Programs</h3>
+          <p class="text-muted text-sm mb-4">Assembly programs and classroom sessions that combine fun with learning</p>
+          <a href="#contact" class="text-primary font-medium hover:underline">Learn More →</a>
+        </div>
+        <div class="p-6 rounded-2xl bg-white shadow-card border-t-4 border-coral">
+          <div class="icon-circle bg-coral/10 text-coral mb-4">
+            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/>
+            </svg>
+          </div>
+          <h3 class="font-display font-semibold text-xl mb-2">Special Education</h3>
+          <p class="text-muted text-sm mb-4">Adapted workshops designed for children with diverse learning needs</p>
+          <a href="#contact" class="text-coral font-medium hover:underline">Learn More →</a>
+        </div>
+        <div class="p-6 rounded-2xl bg-white shadow-card border-t-4 border-green">
+          <div class="icon-circle bg-green/10 text-green mb-4">
+            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z"/>
+            </svg>
+          </div>
+          <h3 class="font-display font-semibold text-xl mb-2">NGO Events</h3>
+          <p class="text-muted text-sm mb-4">Community events and outreach programs for underserved communities</p>
+          <a href="#contact" class="text-green font-medium hover:underline">Learn More →</a>
+        </div>
+        <div class="p-6 rounded-2xl bg-white shadow-card border-t-4 border-yellow">
+          <div class="icon-circle bg-yellow/10 text-yellow-600 mb-4">
+            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7.2 17.5 9.134a1 1 0 010 1.732l-3.354 1.935-1.18 4.455a1 1 0 01-1.933 0L9.854 12.8 6.5 10.866a1 1 0 010-1.732l3.354-1.935 1.18-4.455A1 1 0 0112 2z" clip-rule="evenodd"/>
+            </svg>
+          </div>
+          <h3 class="font-display font-semibold text-xl mb-2">Festival Activations</h3>
+          <p class="text-muted text-sm mb-4">Eye-catching installations for festivals, malls, and corporate events</p>
+          <a href="#contact" class="text-yellow-600 font-medium hover:underline">Learn More →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="py-20 bg-white">
+    <div class="container mx-auto px-4">
+      <h2 class="font-display text-3xl md:text-4xl font-bold text-center mb-4">What People Say</h2>
+      <p class="text-muted text-center max-w-2xl mx-auto mb-12">Hear from schools and organizations we've worked with</p>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+        <div class="p-6 rounded-2xl bg-gradient-to-br from-primary/5 to-transparent border border-primary/10">
+          <div class="flex items-center gap-1 text-yellow-400 mb-4">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+            </svg>
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+            </svg>
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+            </svg>
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+            </svg>
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+            </svg>
+          </div>
+          <p class="text-foreground mb-4">"The children were absolutely mesmerized! It's rare to see such joy and engagement during a school event."</p>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center font-semibold text-primary">PS</div>
+            <div>
+              <p class="font-semibold text-sm">Priya Sharma</p>
+              <p class="text-muted text-xs">Principal, Delhi Public School</p>
+            </div>
+          </div>
+        </div>
+        <div class="p-6 rounded-2xl bg-gradient-to-br from-coral/5 to-transparent border border-coral/10">
+          <div class="flex items-center gap-1 text-yellow-400 mb-4">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+            </svg>
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+            </svg>
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+            </svg>
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+            </svg>
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+            </svg>
+          </div>
+          <p class="text-foreground mb-4">"AmbleBeats brought music to children who never had access to instruments. Truly transformative experience!"</p>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-coral/20 flex items-center justify-center font-semibold text-coral">RK</div>
+            <div>
+              <p class="font-semibold text-sm">Rajesh Kumar</p>
+              <p class="text-muted text-xs">Director, Hope Foundation NGO</p>
+            </div>
+          </div>
+        </div>
+        <div class="p-6 rounded-2xl bg-gradient-to-br from-green/5 to-transparent border border-green/10">
+          <div class="flex items-center gap-1 text-yellow-400 mb-4">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+            </svg>
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+            </svg>
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+            </svg>
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+            </svg>
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+            </svg>
+          </div>
+          <p class="text-foreground mb-4">"Perfect for our special needs students. The inclusive design made everyone feel like a musician!"</p>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-green/20 flex items-center justify-center font-semibold text-green">AP</div>
+            <div>
+              <p class="font-semibold text-sm">Anita Patel</p>
+              <p class="text-muted text-xs">Special Educator, Sunrise School</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="py-20 section-gradient">
+    <div class="container mx-auto px-4">
+      <h2 class="font-display text-3xl md:text-4xl font-bold text-center mb-4">Get In Touch</h2>
+      <p class="text-muted text-center max-w-2xl mx-auto mb-12">Ready to bring the walking piano experience to your organization?</p>
+      
+      <div class="max-w-2xl mx-auto">
+        <form class="bg-white rounded-2xl shadow-card p-8">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div>
+              <label class="block text-sm font-medium mb-2">Name</label>
+              <input type="text" placeholder="Your name" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-primary focus:outline-none transition-colors">
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2">Organization</label>
+              <input type="text" placeholder="School/NGO name" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-primary focus:outline-none transition-colors">
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div>
+              <label class="block text-sm font-medium mb-2">Email</label>
+              <input type="email" placeholder="your@email.com" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-primary focus:outline-none transition-colors">
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2">Phone</label>
+              <input type="tel" placeholder="+91 98765 43210" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-primary focus:outline-none transition-colors">
+            </div>
+          </div>
+          <div class="mb-6">
+            <label class="block text-sm font-medium mb-2">Event Type</label>
+            <select class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-primary focus:outline-none transition-colors">
+              <option>Select event type</option>
+              <option>School Assembly</option>
+              <option>Special Education Workshop</option>
+              <option>NGO Community Event</option>
+              <option>Festival/Corporate Event</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="mb-6">
+            <label class="block text-sm font-medium mb-2">Message</label>
+            <textarea placeholder="Tell us about your event..." rows="4" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-primary focus:outline-none transition-colors resize-none"></textarea>
+          </div>
+          <button type="submit" class="w-full btn-cta text-white py-4 rounded-xl font-semibold text-lg">
+            Send Message
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-foreground text-white py-12">
+    <div class="container mx-auto px-4">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+        <a href="#home" class="flex items-center gap-3">
+          <img src="logo.jpg" alt="AmbleBeats Logo" class="h-16 w-auto rounded-lg">
+          <span class="font-display text-2xl font-bold text-white">Amble Beats</span>
+        </a>
+        <div class="flex items-center gap-6">
+          <a href="#home" class="text-white/70 hover:text-white transition-colors">Home</a>
+          <a href="#programs" class="text-white/70 hover:text-white transition-colors">Programs</a>
+          <a href="#contact" class="text-white/70 hover:text-white transition-colors">Contact</a>
+        </div>
+        <p class="text-white/50 text-sm">© 2024 AmbleBeats. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile menu toggle
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobileMenu');
+      menu.classList.toggle('hidden');
+    }
+
+    // Robot click interaction
+    const robot = document.getElementById('robot');
+    const speechBubble = document.getElementById('speechBubble');
+    const sparkles = document.getElementById('sparkles');
+    
+    robot.addEventListener('click', () => {
+      speechBubble.style.opacity = '1';
+      sparkles.style.opacity = '1';
+      robot.style.transform = 'scale(1.05)';
+      
+      setTimeout(() => {
+        speechBubble.style.opacity = '0';
+        sparkles.style.opacity = '0';
+        robot.style.transform = 'scale(1)';
+      }, 2000);
+    });
+
+    // Simplified eyes movement (pupils move slightly)
+    const robotContainer = document.getElementById('robotContainer');
+    const leftPupil = document.getElementById('leftPupil');
+    const rightPupil = document.getElementById('rightPupil');
+
+    robotContainer.addEventListener('mousemove', (e) => {
+      const rect = robotContainer.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      
+      const deltaX = (e.clientX - centerX) / 40;
+      const deltaY = (e.clientY - centerY) / 40;
+      
+      const clampedX = Math.max(-3, Math.min(3, deltaX));
+      const clampedY = Math.max(-2, Math.min(2, deltaY));
+      
+      leftPupil.style.transform = `translate(${clampedX}px, ${clampedY}px)`;
+      rightPupil.style.transform = `translate(${clampedX}px, ${clampedY}px)`;
+    });
+
+    // Piano interaction with Web Audio API
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    
+    const noteFrequencies = {
+      'C4': 261.63, 'D4': 293.66, 'E4': 329.63, 'F4': 349.23,
+      'G4': 392.00, 'A4': 440.00, 'B4': 493.88, 'C5': 523.25,
+      'D5': 587.33, 'E5': 659.25, 'F5': 698.46, 'G5': 783.99, 
+      'A5': 880.00, 'B5': 987.77
+    };
+
+    function playNote(frequency) {
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+      
+      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      oscillator.start();
+      oscillator.stop(audioContext.currentTime + 0.5);
+    }
+
+    const pianoKeys = document.querySelectorAll('.piano-key');
+    let lastPlayedNote = null;
+
+    pianoKeys.forEach(key => {
+      const colorBar = key.querySelector('div');
+      const originalColor = window.getComputedStyle(colorBar).backgroundColor;
+      
+      key.addEventListener('mouseenter', () => {
+        const note = key.dataset.note;
+        if (note !== lastPlayedNote) {
+          key.style.backgroundColor = originalColor;
+          key.style.transform = 'translateY(-4px)';
+          key.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.2)';
+          playNote(noteFrequencies[note]);
+          lastPlayedNote = note;
+        }
+      });
+
+      key.addEventListener('mouseleave', () => {
+        key.style.backgroundColor = '#ffffff';
+        key.style.transform = 'translateY(0)';
+        key.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.1)';
+        lastPlayedNote = null;
+      });
+
+      key.addEventListener('click', () => {
+        const note = key.dataset.note;
+        key.style.backgroundColor = originalColor;
+        key.style.transform = 'translateY(-4px)';
+        playNote(noteFrequencies[note]);
+        setTimeout(() => {
+          key.style.backgroundColor = '#ffffff';
+          key.style.transform = 'translateY(0)';
+        }, 300);
+      });
+    });
+
+    // Resume audio context on user interaction
+    document.addEventListener('click', () => {
+      if (audioContext.state === 'suspended') {
+        audioContext.resume();
+      }
+    }, { once: true });
+  </script>
+</body>
+</html>

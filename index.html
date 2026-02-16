@@ -1,0 +1,1084 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Amble Beats | Interactive Walking Pianos</title>
+  <!-- UNIQUE FONTS: Syne (Artistic/Premium) + Space Grotesk (Tech/Modern) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&family=Syne:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #050505;
+      --bg-section: #0a0a0a;
+      --bg-card: rgba(255, 255, 255, 0.03);
+      --text-main: #ffffff;
+      --text-muted: #999999;
+      --accent-gold: #D4AF37;
+      /* More premium "Champagne Gold" */
+      --accent-blue: #00aaff;
+      --spotlight-left: rgba(212, 175, 55, 0.15);
+      --spotlight-right: rgba(255, 255, 255, 0.08);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --glass-shine: rgba(255, 255, 255, 0.03);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      line-height: 1.6;
+      overflow-x: hidden;
+      font-weight: 300;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.3s ease;
+    }
+
+    /* Utility */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 40px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    .grid {
+      display: grid;
+    }
+
+    .grid-2 {
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+    }
+
+    .grid-3 {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 30px;
+    }
+
+    /* Initial Fade In */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 1s cubic-bezier(0.2, 0.8, 0.2, 1), transform 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* HEADER */
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      padding: 30px 50px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      transition: background 0.3s ease;
+    }
+
+    header.scrolled {
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      padding: 20px 50px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .logo img {
+      height: 40px;
+      width: auto;
+      display: block;
+    }
+
+    .logo-text {
+      font-family: 'Space Grotesk', sans-serif;
+      /* "Time Space" Interpretation */
+      font-size: 20px;
+      font-weight: 700;
+      color: white;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 40px;
+    }
+
+    .nav-links a {
+      font-size: 14px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      position: relative;
+    }
+
+    .nav-links a:hover {
+      color: white;
+    }
+
+    .btn-contact {
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 10px 25px;
+      border-radius: 50px;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: white !important;
+    }
+
+    .btn-contact:hover {
+      border-color: white;
+      background: white;
+      color: black !important;
+    }
+
+
+    /* HERO SECTION with Spotlight Animation */
+    #hero {
+      height: 100vh;
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: flex-end;
+      /* Text at bottom */
+      justify-content: center;
+      padding-bottom: 120px;
+      background: black;
+    }
+
+    /* The Spotlight Effect */
+    .spotlight-container {
+      position: absolute;
+      top: -20%;
+      left: 0;
+      width: 100%;
+      height: 120%;
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+
+    .beam {
+      position: absolute;
+      top: 0;
+      width: 60%;
+      height: 150%;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(212, 175, 55, 0) 80%);
+      opacity: 0.4;
+      filter: blur(50px);
+      transform-origin: top center;
+    }
+
+    .beam-left {
+      left: 10%;
+      background: linear-gradient(170deg, var(--spotlight-left) 0%, transparent 70%);
+      animation: sway-left 8s ease-in-out infinite alternate;
+    }
+
+    .beam-right {
+      right: 10%;
+      background: linear-gradient(190deg, var(--spotlight-right) 0%, transparent 70%);
+      animation: sway-right 9s ease-in-out infinite alternate;
+    }
+
+    /* Interactive grid/moire effect overlay */
+    .interference-pattern {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: repeating-linear-gradient(90deg, transparent, transparent 50px, rgba(255, 255, 255, 0.02) 50px, rgba(255, 255, 255, 0.02) 51px);
+      opacity: 0.4;
+      mask-image: radial-gradient(circle at 50% 50%, black, transparent 80%);
+      animation: pulse-grid 10s infinite alternate;
+    }
+
+    @keyframes sway-left {
+      0% {
+        transform: rotate(15deg) translateX(-50px);
+        opacity: 0.3;
+      }
+
+      100% {
+        transform: rotate(25deg) translateX(0px);
+        opacity: 0.5;
+      }
+    }
+
+    @keyframes sway-right {
+      0% {
+        transform: rotate(-15deg) translateX(50px);
+        opacity: 0.2;
+      }
+
+      100% {
+        transform: rotate(-25deg) translateX(0px);
+        opacity: 0.4;
+      }
+    }
+
+    @keyframes pulse-grid {
+      0% {
+        opacity: 0.3;
+        transform: scale(1);
+      }
+
+      100% {
+        opacity: 0.5;
+        transform: scale(1.02);
+      }
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+    }
+
+    .hero-title {
+      font-size: 60px;
+      line-height: 0.95;
+      margin-bottom: 20px;
+      background: linear-gradient(180deg, #fff 0%, #aaa 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+      text-transform: uppercase;
+    }
+
+    .hero-description {
+      font-size: 20px;
+      color: var(--text-muted);
+      margin-bottom: 40px;
+      font-weight: 300;
+      letter-spacing: 0.02em;
+    }
+
+    .scroll-indicator {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.3em;
+      color: rgba(255, 255, 255, 0.5);
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+
+      0%,
+      20%,
+      50%,
+      80%,
+      100% {
+        transform: translateX(-50%) translateY(0);
+      }
+
+      40% {
+        transform: translateX(-50%) translateY(-10px);
+      }
+
+      60% {
+        transform: translateX(-50%) translateY(-5px);
+      }
+    }
+
+
+    /* GENERAL SECTIONS */
+    section {
+      padding: 140px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      background: var(--bg-section);
+    }
+
+    .section-title {
+      font-size: 48px;
+      margin-bottom: 60px;
+      text-transform: uppercase;
+      line-height: 0.9;
+    }
+
+    /* INTRO */
+    .intro-img {
+      width: 100%;
+      height: 550px;
+      object-fit: cover;
+      filter: grayscale(100%) contrast(1.1) brightness(0.8);
+      transition: filter 0.8s ease;
+      border-radius: 4px;
+    }
+
+    .intro-img:hover {
+      filter: grayscale(0%) contrast(1) brightness(1);
+    }
+
+    .intro-text p {
+      font-size: 18px;
+      color: var(--text-muted);
+      margin-bottom: 30px;
+      max-width: 90%;
+    }
+
+
+    /* TECH SECTION - GLASS CARDS */
+    .tech-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+
+    .tech-card {
+      background: rgba(255, 255, 255, 0.02);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 40px 30px;
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      transition: all 0.4s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Subtle shine gradient */
+    .tech-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 100%);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      pointer-events: none;
+    }
+
+    .tech-card:hover {
+      transform: translateY(-10px);
+      border-color: rgba(212, 175, 55, 0.3);
+      /* Gold border on hover */
+      background: rgba(255, 255, 255, 0.04);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .tech-card:hover::before {
+      opacity: 1;
+    }
+
+    .tech-icon-svg {
+      width: 48px;
+      height: 48px;
+      stroke: var(--accent-gold);
+      fill: none;
+      stroke-width: 1.5;
+      margin-bottom: 30px;
+      transition: transform 0.3s ease;
+    }
+
+    .tech-card:hover .tech-icon-svg {
+      transform: scale(1.1);
+    }
+
+    .tech-card h3 {
+      font-size: 20px;
+      margin-bottom: 15px;
+      color: white;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 500;
+    }
+
+    .tech-card p {
+      font-size: 14px;
+      color: #888;
+      line-height: 1.5;
+    }
+
+
+    /* ADVANTAGES */
+    .advantage-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 100px;
+      justify-content: space-between;
+    }
+
+    .advantage-row:nth-child(even) {
+      flex-direction: row-reverse;
+    }
+
+    .advantage-content {
+      flex-basis: 40%;
+    }
+
+    .advantage-image {
+      flex-basis: 50%;
+      height: 400px;
+      background: #111;
+      position: relative;
+      overflow: hidden;
+      border-radius: 8px;
+    }
+
+    .advantage-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.5;
+      transition: transform 0.8s ease, opacity 0.5s ease;
+    }
+
+    .advantage-row:hover .advantage-image img {
+      transform: scale(1.05);
+      opacity: 0.8;
+    }
+
+    .advantage-number {
+      font-family: 'Syne', sans-serif;
+      font-size: 100px;
+      font-weight: 800;
+      color: rgba(255, 255, 255, 0.03);
+      line-height: 0.8;
+      margin-bottom: -40px;
+      margin-left: -10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .advantage-content h3 {
+      font-size: 32px;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 2;
+      color: white;
+    }
+
+    .advantage-content p {
+      font-size: 16px;
+      color: #999;
+      position: relative;
+      z-index: 2;
+    }
+
+
+    /* FAQ */
+    .faq-item {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 0;
+    }
+
+    .faq-question {
+      padding: 30px 0;
+      cursor: pointer;
+      font-size: 22px;
+      display: flex;
+      justify-content: space-between;
+      color: #ccc;
+      font-family: 'Syne', sans-serif;
+      transition: color 0.3s;
+    }
+
+    .faq-question:hover {
+      color: var(--accent-gold);
+    }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, padding 0.4s ease;
+      color: #888;
+      padding-bottom: 0;
+      line-height: 1.6;
+    }
+
+    .faq-item.active .faq-answer {
+      padding-bottom: 30px;
+      max-height: 200px;
+    }
+
+    .faq-toggle {
+      font-size: 24px;
+      transition: transform 0.3s;
+      font-weight: 300;
+    }
+
+    .faq-item.active .faq-toggle {
+      transform: rotate(45deg);
+      color: var(--accent-gold);
+    }
+
+
+    /* CONTACT */
+    #contact {
+      background: #000;
+      padding-top: 100px;
+    }
+
+    .contact-form {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .form-control {
+      border-bottom: 1px solid #222;
+      padding: 15px 0;
+      font-size: 18px;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .form-control:focus {
+      border-bottom-color: var(--accent-gold);
+    }
+
+    .btn-submit {
+      background: transparent;
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 20px 60px;
+      font-size: 14px;
+      letter-spacing: 0.1em;
+      margin-top: 40px;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .btn-submit:hover {
+      background: white;
+      color: black;
+      border-color: white;
+    }
+
+
+    /* FOOTER */
+    footer {
+      background: #000;
+      padding: 80px 0 40px;
+      border-top: 1px solid #111;
+      color: #444;
+      font-size: 13px;
+    }
+
+    .footer-logo {
+      color: white;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 24px;
+      margin-bottom: 20px;
+      display: block;
+    }
+
+
+    /* RESPONSIVE */
+    @media (max-width: 1024px) {
+      .tech-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .hero-title {
+        font-size: 60px;
+      }
+    }
+
+    @media (max-width: 768px) {
+
+      .grid-2,
+      .grid-3,
+      .tech-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .advantage-row,
+      .advantage-row:nth-child(even) {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .advantage-image {
+        width: 100%;
+        margin-bottom: 30px;
+        height: 300px;
+      }
+
+      .hero-title {
+        font-size: 44px;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .container {
+        padding: 0 20px;
+      }
+
+      .product-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* PRODUCT STYLES (from preorder.html) */
+    .product-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      margin-bottom: 80px;
+    }
+
+    .product-card {
+      background: var(--bg-card);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: transform 0.3s, border-color 0.3s;
+      display: block;
+      /* Reset potential flex from tech-card reuse */
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--accent-gold);
+    }
+
+    .product-image {
+      width: 100%;
+      height: 400px;
+      background: #111;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #333;
+      font-size: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .product-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .product-details {
+      padding: 40px;
+      text-align: left;
+      /* Reset center align */
+    }
+
+    .product-title {
+      font-size: 32px;
+      margin-bottom: 15px;
+      color: white;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+    }
+
+    .product-price {
+      font-size: 24px;
+      color: var(--accent-gold);
+      margin-bottom: 20px;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .product-desc {
+      color: var(--text-muted);
+      margin-bottom: 30px;
+      font-size: 16px;
+    }
+
+    .features-list {
+      list-style: none;
+      margin-bottom: 30px;
+      text-align: left;
+    }
+
+    .features-list li {
+      margin-bottom: 10px;
+      padding-left: 20px;
+      position: relative;
+      color: #ccc;
+      font-size: 14px;
+    }
+
+    .features-list li::before {
+      content: '•';
+      color: var(--accent-gold);
+      position: absolute;
+      left: 0;
+    }
+
+    .btn-preorder {
+      display: block;
+      width: 100%;
+      padding: 18px;
+      text-align: center;
+      background: white;
+      color: black;
+      font-family: 'Space Grotesk', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background 0.3s, transform 0.2s;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-preorder:hover {
+      background: var(--accent-gold);
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+
+<body>
+
+  <header id="header">
+    <a href="#" class="logo">
+      <!-- LOGO TEXT ONLY -->
+      <span class="logo-text">AMBLE BEATS</span>
+    </a>
+    <nav class="nav-links">
+      <a href="#about">About</a>
+      <a href="#tech">Technology</a>
+      <a href="#benefits">Benefits</a>
+      <a href="#contact" class="btn-contact">Get in Touch</a>
+    </nav>
+  </header>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="spotlight-container">
+      <div class="beam beam-left"></div>
+      <div class="beam beam-right"></div>
+      <div class="interference-pattern"></div>
+    </div>
+
+    <div class="container hero-content fade-in">
+      <h1 class="hero-title">Revolutionize<br>Public Spaces</h1>
+      <p class="hero-description">Transforming Urban Environments into Interactive Melodies</p>
+    </div>
+
+    <div class="scroll-indicator">
+      Scroll
+    </div>
+  </section>
+
+  <!-- INTRO -->
+  <section id="about">
+    <div class="container">
+      <div class="grid-2 items-center">
+        <div class="intro-text fade-in">
+          <h2 class="section-title">The Future<br>of Play</h2>
+          <p>Amble Beats redefines how we interact with our environment. By embedding musical intelligence into the
+            ground beneath our feet, we create spaces that respond, engage, and delight.</p>
+          <p>Our installations are more than just instruments; they are community magnets that encourage physical
+            activity, foster social connection, and spark joy in unexpected places.</p>
+        </div>
+        <div class="intro-visual fade-in">
+          <video autoplay muted loop playsinline class="intro-img">
+            <source src="cinematicshot.mp4" type="video/mp4">
+            <img src="cinematicshot.jpg" alt="Amble Beats installation">
+          </video>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TECH - GLASS CARDS & SVG ICONS -->
+  <section id="tech">
+    <div class="container">
+      <h2 class="section-title">Core Technology</h2>
+      <div class="tech-grid">
+        <!-- Card 1 -->
+        <div class="tech-card fade-in">
+          <svg class="tech-icon-svg" viewBox="0 0 24 24">
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          <h3>Precision Sensors</h3>
+          <p>Latency-free pressure detection specifically tuned for human footsteps, capturing velocity and duration.
+          </p>
+        </div>
+        <!-- Card 2 -->
+        <div class="tech-card fade-in">
+          <svg class="tech-icon-svg" viewBox="0 0 24 24">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          <h3>All-Weather Build</h3>
+          <p>IP68-rated sealed units designed to withstand rain, snow, and extreme temperature fluctuations.</p>
+        </div>
+        <!-- Card 3 -->
+        <div class="tech-card fade-in">
+          <svg class="tech-icon-svg" viewBox="0 0 24 24">
+            <path d="M11 5L6 9H2v6h4l5 4V5zM19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"
+              stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          <h3>High-Fi Audio</h3>
+          <p>Integrated BOSE environmental speakers providing rich, immersive sound that fills the space.</p>
+        </div>
+        <!-- Card 4 -->
+        <div class="tech-card fade-in">
+          <svg class="tech-icon-svg" viewBox="0 0 24 24">
+            <rect x="3" y="3" width="7" height="7" stroke-linecap="round" stroke-linejoin="round" />
+            <rect x="14" y="3" width="7" height="7" stroke-linecap="round" stroke-linejoin="round" />
+            <rect x="14" y="14" width="7" height="7" stroke-linecap="round" stroke-linejoin="round" />
+            <rect x="3" y="14" width="7" height="7" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          <h3>Modular Design</h3>
+          <p>Scalable tile system allowing for infinite configurations, from simple scales to complex layouts.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRODUCTS SECTION -->
+  <section id="products">
+    <div class="container">
+      <h2 class="section-title">Our Collections</h2>
+      <div class="grid-2">
+        <!-- Collection 1: Children -->
+        <div class="tech-card fade-in" style="align-items: center; text-align: center;">
+          <div
+            style="width: 100%; height: 300px; background: #222; margin-bottom: 20px; overflow: hidden; border-radius: 8px;">
+            <img src="children.jpg" alt="Children's Piano" style="width: 100%; height: 100%; object-fit: cover;">
+          </div>
+          <h3>Children's Edition</h3>
+          <p style="margin-bottom: 20px;">Playful, colorful, and engaging designs for schools and playgrounds.</p>
+          <a href="preorder.html" class="btn-contact" style="background: white; color: black; border: none;">Pre-Order
+            Now</a>
+        </div>
+
+        <!-- Collection 2: Classic -->
+        <div class="tech-card fade-in" style="align-items: center; text-align: center;">
+          <div
+            style="width: 100%; height: 300px; background: #222; margin-bottom: 20px; overflow: hidden; border-radius: 8px;">
+            <img src="classic.jpg" alt="Classic Piano" style="width: 100%; height: 100%; object-fit: cover;">
+          </div>
+          <h3>Classic Edition</h3>
+          <p style="margin-bottom: 20px;">Elegant, sophisticated designs for urban parks and premium venues.</p>
+          <a href="preorder.html" class="btn-contact" style="background: white; color: black; border: none;">Pre-Order
+            Now</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BENEFITS (Alternating Layout) -->
+  <section id="benefits">
+    <div class="container">
+      <h2 class="section-title">Why Amble Beats?</h2>
+
+      <div class="advantage-row fade-in">
+        <div class="advantage-content">
+          <div class="advantage-number">01</div>
+          <h3>Physical Engagement</h3>
+          <p>Turning passive walking into active play. Our data shows a 40% increase in pedestrian activity in installed
+            zones.</p>
+        </div>
+        <div class="advantage-image">
+          <img src="benefit1 (1).png" alt="Physical Activity">
+        </div>
+      </div>
+
+      <div class="advantage-row fade-in">
+        <div class="advantage-content">
+          <div class="advantage-number">02</div>
+          <h3>Social Connection</h3>
+          <p>Breaking the ice in public spaces. Strangers become collaborators, creating impromptu performances
+            together.</p>
+        </div>
+        <div class="advantage-image">
+          <img src="benefit1 (2).png" alt="Social Connection">
+        </div>
+      </div>
+
+      <div class="advantage-row fade-in">
+        <div class="advantage-content">
+          <div class="advantage-number">03</div>
+          <h3>Cognitive Development</h3>
+          <p>A powerful tool for education and therapy. Combining gross motor skills with auditory feedback supports
+            sensory integration.</p>
+        </div>
+        <div class="advantage-image">
+          <img src="benefit1 (3).png" alt="Education">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="container">
+      <h2 class="section-title">Common Questions</h2>
+      <div class="faq-item fade-in">
+        <div class="faq-question">
+          Is installation permanent?
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer">
+          Amble Beats supports both permanent embedment for parks and temporary surface-mount solutions for events and
+          festivals.
+        </div>
+      </div>
+      <div class="faq-item fade-in">
+        <div class="faq-question">
+          How durable are the keys?
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer">
+          Extremely. Constructed from tempered aeronautical glass and high-grade aluminum, each key can support up to
+          500kg of load.
+        </div>
+      </div>
+      <div class="faq-item fade-in">
+        <div class="faq-question">
+          What about maintenance?
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer">
+          Zero maintenance required for internal components. We recommend a simple surface cleaning once a month to keep
+          the visual appeal high.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="container">
+      <h2 class="section-title text-center" style="border: none; padding: 0;">Start Your Project</h2>
+      <form class="contact-form fade-in">
+        <div class="grid-2" style="gap: 40px; margin-bottom: 30px;">
+          <div class="form-group">
+            <label style="display:none">Name</label>
+            <input type="text" class="form-control" placeholder="Name">
+          </div>
+          <div class="form-group">
+            <label style="display:none">Organization</label>
+            <input type="text" class="form-control" placeholder="Organization">
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom: 30px;">
+          <label style="display:none">Email</label>
+          <input type="email" class="form-control" placeholder="Email Address">
+        </div>
+        <div class="form-group">
+          <label style="display:none">Message</label>
+          <input type="text" class="form-control" placeholder="Tell us about your space...">
+        </div>
+        <div class="text-center">
+          <button type="submit" class="btn-submit">REQUEST CONSULTATION</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container footer-content" style="display: flex; justify-content: space-between; align-items: center;">
+      <div class="footer-left">
+        <span class="footer-logo">AMBLE BEATS</span>
+        <p>&copy; 2024 Amble Beats. All rights reserved.</p>
+      </div>
+      <div class="footer-right">
+        <div class="nav-links" style="font-size: 12px; opacity: 0.6;">
+          <a href="#">Privacy</a>
+          <a href="#">Terms</a>
+          <a href="#">Contact</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Header Scroll Effect
+    window.addEventListener('scroll', () => {
+      const header = document.getElementById('header');
+      if (window.scrollY > 50) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+    });
+
+    // Intersection Observer for Fade-in effects
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: "0px 0px -50px 0px"
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          // Optional: Unobserve after animating once
+          // observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.fade-in').forEach(el => {
+      observer.observe(el);
+    });
+
+    // FAQ Accordion
+    document.querySelectorAll('.faq-question').forEach(button => {
+      button.addEventListener('click', () => {
+        const item = button.parentElement;
+        const isActive = item.classList.contains('active');
+
+        // Close all
+        document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
+
+        // Toggle current
+        if (!isActive) {
+          item.classList.add('active');
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>
