@@ -319,7 +319,7 @@
                     <button
                         class="btn-preorder"
                         id="btn-children"
-                        onclick="startPayment('Children\'s Edition', 999, 'btn-children', 'status-children')"
+                        onclick="startPayment('Children\'s Edition', 5000, 'btn-children', 'status-children')"
                     >
                         Pre-Order This Edition
                     </button>
@@ -349,7 +349,7 @@
                     <button
                         class="btn-preorder"
                         id="btn-classic"
-                        onclick="startPayment('Classic Edition', 1499, 'btn-classic', 'status-classic')"
+                        onclick="startPayment('Classic Edition', 5000, 'btn-classic', 'status-classic')"
                     >
                         Pre-Order This Edition
                     </button>
@@ -430,7 +430,7 @@
                         } else {
                             setStatus(statusId, "❌ Verification failed. Contact support.", "error");
                             btn.disabled = false;
-                            btn.textContent = "Pre-Order This Edition";
+                            btn.textContent = "Preorder at 5000 ₹";
                         }
                     },
 
@@ -438,7 +438,7 @@
                         ondismiss: function () {
                             setStatus(statusId, "Payment cancelled. Try again when ready.", "error");
                             btn.disabled = false;
-                            btn.textContent = "Pre-Order This Edition";
+                            btn.textContent = "Preorder at 5000 ₹";
                         }
                     }
                 };
