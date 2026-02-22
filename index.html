@@ -18,8 +18,8 @@
       --bg-card: rgba(255, 255, 255, 0.03);
       --text-main: #ffffff;
       --text-muted: #999999;
-      --accent-gold: #D4AF37;
-      /* More premium "Champagne Gold" */
+      --accent-gold: #E8E8E8;
+      /* Metallic White */
       --accent-blue: #00aaff;
       --spotlight-left: rgba(212, 175, 55, 0.15);
       --spotlight-right: rgba(255, 255, 255, 0.08);
@@ -140,6 +140,7 @@
     .nav-links {
       display: flex;
       gap: 40px;
+      align-items: center;
     }
 
     .nav-links a {
@@ -401,8 +402,6 @@
 
     .tech-card:hover {
       transform: translateY(-10px);
-      border-color: rgba(212, 175, 55, 0.3);
-      /* Gold border on hover */
       background: rgba(255, 255, 255, 0.04);
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
     }
@@ -572,7 +571,10 @@
     }
 
     .form-control:focus {
-      border-bottom-color: var(--accent-gold);
+      outline: none;
+      background: #fff;
+      color: #000;
+      border: none;
     }
 
     .btn-submit {
@@ -587,9 +589,10 @@
     }
 
     .btn-submit:hover {
-      background: white;
-      color: black;
+      background: transparent;
+      color: white;
       border-color: white;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
     }
 
 
@@ -613,21 +616,55 @@
 
 
     /* RESPONSIVE */
+    /* Desktop Large (1200px+) */
+    @media (max-width: 1200px) {
+      .container {
+        padding: 0 30px;
+      }
+    }
+
+    /* Laptop/Desktop (1024px - 1199px) */
     @media (max-width: 1024px) {
       .tech-grid {
         grid-template-columns: repeat(2, 1fr);
       }
 
       .hero-title {
-        font-size: 60px;
+        font-size: 52px;
+      }
+
+      .section-title {
+        font-size: 36px;
+      }
+
+      .container {
+        padding: 0 25px;
+        max-width: 960px;
+      }
+
+      section {
+        padding: 100px 0;
+      }
+
+      .tech-grid {
+        gap: 20px;
+      }
+
+      .tech-card {
+        padding: 35px 25px;
+      }
+
+      .intro-img {
+        height: 400px;
       }
     }
 
+    /* Tablet (768px - 1023px) */
     @media (max-width: 768px) {
-
       .grid-2,
       .grid-3,
-      .tech-grid {
+      .tech-grid,
+      .product-grid {
         grid-template-columns: 1fr;
       }
 
@@ -644,7 +681,11 @@
       }
 
       .hero-title {
-        font-size: 44px;
+        font-size: 40px;
+      }
+
+      .hero-description {
+        font-size: 18px;
       }
 
       .nav-links {
@@ -653,123 +694,364 @@
 
       .container {
         padding: 0 20px;
+        max-width: 100%;
       }
 
-      .product-grid {
-        grid-template-columns: 1fr;
+      section {
+        padding: 60px 0;
+      }
+
+      .section-title {
+        font-size: 32px;
+        margin-bottom: 40px;
+      }
+
+      .tech-grid {
+        gap: 15px;
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .tech-card {
+        padding: 25px 18px;
+      }
+
+      .intro-img {
+        height: 350px;
+      }
+
+      header {
+        padding: 20px 20px;
+      }
+
+      .logo-text {
+        font-size: 18px;
+      }
+
+      .form-control {
+        padding: 12px 15px;
+        font-size: 16px;
       }
     }
 
-    /* PRODUCT STYLES (from preorder.html) */
-    .product-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 40px;
+    /* Mobile Landscape (568px - 767px) */
+    @media (max-width: 567px) {
+      .hero-title {
+        font-size: 32px;
+        line-height: 1;
+      }
+
+      .hero-description {
+        font-size: 16px;
+      }
+
+      .section-title {
+        font-size: 28px;
+        margin-bottom: 30px;
+      }
+
+      .container {
+        padding: 0 15px;
+      }
+
+      section {
+        padding: 50px 0;
+      }
+
+      header {
+        padding: 15px 15px;
+      }
+
+      .logo-text {
+        font-size: 16px;
+      }
+
+      .tech-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .tech-card {
+        padding: 20px 15px;
+      }
+
+      .intro-img {
+        height: 300px;
+      }
+
+      .advantage-content h3 {
+        font-size: 26px;
+      }
+
+      .form-control {
+        padding: 12px 12px;
+        font-size: 15px;
+      }
+    }
+
+    /* Mobile (480px and below) */
+    @media (max-width: 480px) {
+      .hero-title {
+        font-size: 28px;
+        line-height: 1;
+      }
+
+      .hero-description {
+        font-size: 14px;
+      }
+
+      .section-title {
+        font-size: 24px;
+        margin-bottom: 25px;
+      }
+
+      .container {
+        padding: 0 12px;
+        max-width: 100%;
+      }
+
+      section {
+        padding: 40px 0;
+      }
+
+      header {
+        padding: 12px 12px;
+      }
+
+      .logo-text {
+        font-size: 14px;
+        letter-spacing: 0.02em;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .tech-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .tech-card {
+        padding: 18px 12px;
+      }
+
+      .tech-icon-svg {
+        width: 40px;
+        height: 40px;
+        margin-bottom: 20px;
+      }
+
+      .tech-card h3 {
+        font-size: 18px;
+      }
+
+      .tech-card p {
+        font-size: 12px;
+      }
+
+      .intro-img {
+        height: 250px;
+      }
+
+      .advantage-content h3 {
+        font-size: 22px;
+      }
+
+      .advantage-content p {
+        font-size: 14px;
+      }
+
+      .advantage-image {
+        height: 250px;
+      }
+
+      .advantage-number {
+        font-size: 80px;
+      }
+
+      .form-control {
+        padding: 10px 10px;
+        font-size: 14px;
+      }
+
+      .btn-submit {
+        padding: 16px 40px;
+        font-size: 12px;
+      }
+
+      .faq-question {
+        font-size: 18px;
+        padding: 20px 0;
+      }
+
+      .footer-logo {
+        font-size: 18px;
+      }
+    }
+
+    /* Small Mobile (360px and below) */
+    @media (max-width: 360px) {
+      .hero {
+        padding-bottom: 80px;
+      }
+
+      .hero-title {
+        font-size: 24px;
+      }
+
+      .hero-description {
+        font-size: 13px;
+      }
+
+      .section-title {
+        font-size: 20px;
+        margin-bottom: 20px;
+      }
+
+      .container {
+        padding: 0 10px;
+      }
+
+      section {
+        padding: 30px 0;
+      }
+
+      .tech-card {
+        padding: 15px 10px;
+      }
+
+      .tech-card h3 {
+        font-size: 16px;
+      }
+
+      .form-control {
+        font-size: 13px;
+        padding: 8px 8px;
+      }
+    }
+
+    /* COLLECTIONS SECTION */
+    #products {
+      background: linear-gradient(180deg, var(--bg-section) 0%, #030303 100%);
+      padding: 120px 0;
+    }
+
+    #products .section-title {
+      text-align: center;
       margin-bottom: 80px;
     }
 
-    .product-card {
-      background: var(--bg-card);
-      border: 1px solid var(--glass-border);
-      border-radius: 12px;
-      overflow: hidden;
-      transition: transform 0.3s, border-color 0.3s;
-      display: block;
-      /* Reset potential flex from tech-card reuse */
+    .collections-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 50px;
+      max-width: 1000px;
+      margin: 0 auto;
     }
 
-    .product-card:hover {
-      transform: translateY(-5px);
-      border-color: var(--accent-gold);
+    .collection-item {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
     }
 
-    .product-image {
+    .collection-image-container {
       width: 100%;
-      height: 400px;
-      background: #111;
+      height: 340px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #333;
-      font-size: 20px;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
+      margin-bottom: 35px;
+      overflow: hidden;
+      transition: all 0.4s ease;
     }
 
-    .product-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+    .collection-item:hover .collection-image-container {
+      border-color: rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.03);
     }
 
-    .product-details {
-      padding: 40px;
-      text-align: left;
-      /* Reset center align */
+    .collection-image-container img {
+      width: 85%;
+      height: 85%;
+      object-fit: contain;
+      transition: transform 0.4s ease;
     }
 
-    .product-title {
-      font-size: 32px;
-      margin-bottom: 15px;
-      color: white;
-      font-family: 'Syne', sans-serif;
+    .collection-item:hover .collection-image-container img {
+      transform: scale(1.05);
+    }
+
+    .collection-content {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .collection-title {
+      font-size: 28px;
       font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 15px;
+      font-family: 'Syne', sans-serif;
     }
 
-    .product-price {
-      font-size: 24px;
-      color: var(--accent-gold);
-      margin-bottom: 20px;
-      font-family: 'Space Grotesk', sans-serif;
-    }
-
-    .product-desc {
-      color: var(--text-muted);
+    .collection-description {
+      font-size: 15px;
+      color: #999999;
+      line-height: 1.6;
       margin-bottom: 30px;
-      font-size: 16px;
+      flex-grow: 1;
     }
 
-    .features-list {
-      list-style: none;
-      margin-bottom: 30px;
-      text-align: left;
+    .collection-cta {
+      align-self: flex-start;
     }
 
-    .features-list li {
-      margin-bottom: 10px;
-      padding-left: 20px;
-      position: relative;
-      color: #ccc;
-      font-size: 14px;
-    }
-
-    .features-list li::before {
-      content: '•';
-      color: var(--accent-gold);
-      position: absolute;
-      left: 0;
-    }
-
-    .btn-preorder {
-      display: block;
-      width: 100%;
-      padding: 18px;
-      text-align: center;
-      background: white;
-      color: black;
-      font-family: 'Space Grotesk', sans-serif;
+    .collection-cta a {
+      font-size: 13px;
+      font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.1em;
-      font-weight: 600;
-      text-decoration: none;
-      transition: background 0.3s, transform 0.2s;
-      border: none;
-      cursor: pointer;
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 12px 28px;
+      border-radius: 4px;
+      display: inline-block;
+      transition: all 0.3s ease;
     }
 
-    .btn-preorder:hover {
-      background: var(--accent-gold);
-      transform: translateY(-2px);
+    .collection-cta a:hover {
+      border-color: #ffffff;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    /* Form Controls Styling */
+    .form-control {
+      border-bottom: 1px solid #222;
+      padding: 15px 0;
+      font-size: 18px;
+      font-family: 'Space Grotesk', sans-serif;
+      background: #000;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 15px 20px;
+      transition: all 0.3s ease;
+    }
+
+    .form-control:hover {
+      border-bottom: 2px solid rgba(255, 255, 255, 0.5);
+    }
+
+    .form-control:focus {
+      outline: none;
+      background: #fff;
+      color: #000;
+      border: none;
     }
   </style>
 </head>
@@ -785,7 +1067,7 @@
       <a href="#about">About</a>
       <a href="#tech">Technology</a>
       <a href="#benefits">Benefits</a>
-      <a href="#contact" class="btn-contact">Get in Touch</a>
+      <a href="#contact" class="btn-contact">Book a Demo</a>
     </nav>
   </header>
 
@@ -797,7 +1079,14 @@
       <div class="interference-pattern"></div>
     </div>
 
-    <div class="container hero-content fade-in">
+    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; overflow: hidden;">
+      <video autoplay muted loop playsinline style="width: 100%; height: 100%; object-fit: cover; opacity: 0.6;">
+        <source src="Video_hero.mp4" type="video/mp4">
+        <img src="cinematicshot.jpg" alt="Amble Beats installation">
+      </video>
+    </div>
+
+    <div class="container hero-content fade-in" style="position: relative; z-index: 10;">
       <h1 class="hero-title">Revolutionize<br>Public Spaces</h1>
       <p class="hero-description">Transforming Urban Environments into Interactive Melodies</p>
     </div>
@@ -818,10 +1107,19 @@
           <p>Our installations are more than just instruments; they are community magnets that encourage physical
             activity, foster social connection, and spark joy in unexpected places.</p>
         </div>
-        <div class="intro-visual fade-in">
-          <video autoplay muted loop playsinline class="intro-img">
-            <source src="cinematicshot.mp4" type="video/mp4">
-            <img src="cinematicshot.jpg" alt="Amble Beats installation">
+
+      </div>
+    </div>
+  </section>
+
+  <!-- VIDEO SHOWCASE SECTION -->
+  <section id="video-showcase" style="padding: 100px 0;">
+    <div class="container">
+      <div style="display: flex; justify-content: center;">
+        <div style="width: 100%; max-width: 1200px; max-height: 900px; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);">
+          <video autoplay muted loop playsinline style="width: 100%; height: 150%; object-fit: cover; display: block;">
+            <source src="Video_hero.mp4" type="video/mp4">
+            <img src="cinematicshot.jpg" alt="Amble Beats showcase">
           </video>
         </div>
       </div>
@@ -874,38 +1172,6 @@
     </div>
   </section>
 
-  <!-- PRODUCTS SECTION -->
-  <section id="products">
-    <div class="container">
-      <h2 class="section-title">Our Collections</h2>
-      <div class="grid-2">
-        <!-- Collection 1: Children -->
-        <div class="tech-card fade-in" style="align-items: center; text-align: center;">
-          <div
-            style="width: 100%; height: 300px; background: #222; margin-bottom: 20px; overflow: hidden; border-radius: 8px;">
-            <img src="children.jpg" alt="Children's Piano" style="width: 100%; height: 100%; object-fit: cover;">
-          </div>
-          <h3>Children's Edition</h3>
-          <p style="margin-bottom: 20px;">Playful, colorful, and engaging designs for schools and playgrounds.</p>
-          <a href="preorder.html" class="btn-contact" style="background: white; color: black; border: none;">Pre-Order
-            Now</a>
-        </div>
-
-        <!-- Collection 2: Classic -->
-        <div class="tech-card fade-in" style="align-items: center; text-align: center;">
-          <div
-            style="width: 100%; height: 300px; background: #222; margin-bottom: 20px; overflow: hidden; border-radius: 8px;">
-            <img src="classic.jpg" alt="Classic Piano" style="width: 100%; height: 100%; object-fit: cover;">
-          </div>
-          <h3>Classic Edition</h3>
-          <p style="margin-bottom: 20px;">Elegant, sophisticated designs for urban parks and premium venues.</p>
-          <a href="preorder.html" class="btn-contact" style="background: white; color: black; border: none;">Pre-Order
-            Now</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- BENEFITS (Alternating Layout) -->
   <section id="benefits">
     <div class="container">
@@ -919,7 +1185,7 @@
             zones.</p>
         </div>
         <div class="advantage-image">
-          <img src="benefit1 (1).png" alt="Physical Activity">
+          <img src="benefit_1.png" alt="Physical Activity">
         </div>
       </div>
 
@@ -931,7 +1197,7 @@
             together.</p>
         </div>
         <div class="advantage-image">
-          <img src="benefit1 (2).png" alt="Social Connection">
+          <img src="benefit_2.png" alt="Social Connection">
         </div>
       </div>
 
@@ -943,7 +1209,43 @@
             sensory integration.</p>
         </div>
         <div class="advantage-image">
-          <img src="benefit1 (3).png" alt="Education">
+          <img src="benefit_3.png" alt="Education">
+        </div>
+      </div>
+    </div>
+  </section>
+
+    <!-- PRODUCTS SECTION -->
+  <section id="products">
+    <div class="container">
+      <h2 class="section-title">Our Collections</h2>
+      <div class="collections-grid">
+        <!-- Collection 1: Children -->
+        <div class="collection-item fade-in">
+          <div class="collection-image-container">
+            <img src="child.jpg" alt="Children's Piano">
+          </div>
+          <div class="collection-content">
+            <h3 class="collection-title">Children's Edition</h3>
+            <p class="collection-description">Playful, colorful, and engaging designs for schools and playgrounds.</p>
+            <div class="collection-cta">
+              <a href="preorder.html">Pre-Order Now</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Collection 2: Classic -->
+        <div class="collection-item fade-in">
+          <div class="collection-image-container">
+            <img src="classic.jpg" alt="Classic Piano">
+          </div>
+          <div class="collection-content">
+            <h3 class="collection-title">Classic Edition</h3>
+            <p class="collection-description">Elegant, sophisticated designs for urban parks and premium venues.</p>
+            <div class="collection-cta">
+              <a href="preorder.html">Pre-Order Now</a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -989,9 +1291,10 @@
   <!-- CONTACT -->
   <section id="contact">
     <div class="container">
-      <h2 class="section-title text-center" style="border: none; padding: 0;">Start Your Project</h2>
-      <form class="contact-form fade-in">
-        <div class="grid-2" style="gap: 40px; margin-bottom: 30px;">
+      <h2 class="section-title text-center" style="border: none; padding: 0; margin-bottom: 20px;">Book a Demo</h2>
+      <p style="text-align: center; font-size: 18px; color: #888; margin-bottom: 50px;">We will be providing you with an exclusive personalized demonstration of Amble Beats.</p>
+      <form class="contact-form fade-in" style="max-width: 600px;">
+        <div style="display: flex; flex-direction: column; gap: 20px;">
           <div class="form-group">
             <label style="display:none">Name</label>
             <input type="text" class="form-control" placeholder="Name">
@@ -1000,17 +1303,17 @@
             <label style="display:none">Organization</label>
             <input type="text" class="form-control" placeholder="Organization">
           </div>
-        </div>
-        <div class="form-group" style="margin-bottom: 30px;">
-          <label style="display:none">Email</label>
-          <input type="email" class="form-control" placeholder="Email Address">
-        </div>
-        <div class="form-group">
-          <label style="display:none">Message</label>
-          <input type="text" class="form-control" placeholder="Tell us about your space...">
-        </div>
-        <div class="text-center">
-          <button type="submit" class="btn-submit">REQUEST CONSULTATION</button>
+          <div class="form-group">
+            <label style="display:none">Email</label>
+            <input type="email" class="form-control" placeholder="Email Address">
+          </div>
+          <div class="form-group">
+            <label style="display:none">Message</label>
+            <input type="text" class="form-control" placeholder="Tell us about your space...">
+          </div>
+          <div class="text-center">
+            <button type="submit" class="btn-submit">REQUEST CONSULTATION</button>
+          </div>
         </div>
       </form>
     </div>
