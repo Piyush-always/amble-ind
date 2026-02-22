@@ -7,10 +7,25 @@ require("dotenv").config();
 const app = express();
 
 // ─── Middleware ───────────────────────────────────────────────────────────────
+// ─── Middleware ───────────────────────────────────────────────────────────────
 app.use(express.json());
+
+const allowedOrigins = [
+  "http://www.amblebeats.in",
+  "https://www.amblebeats.in",
+  "http://amblebeats.in",
+  "https://amblebeats.in",
+];
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "*", // Set your frontend URL in env
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error("Not allowed by CORS"));
+    },
     methods: ["GET", "POST"],
     allowedHeaders: ["Content-Type"],
   })
