@@ -301,7 +301,7 @@
             <!-- CHILDREN'S EDITION -->
             <div class="product-card">
                 <div class="product-image">
-                    <img src="children.jpg" alt="Children's Edition">
+                    <img src="child.jpg" alt="Children's Edition">
                 </div>
                 <div class="product-details">
                     <h2 class="product-title">Children's Edition</h2>
@@ -321,7 +321,7 @@
                         id="btn-children"
                         onclick="startPayment('Children\'s Edition', 5000, 'btn-children', 'status-children')"
                     >
-                        Pre-Order This Edition
+                        Preorder at 5000 ₹
                     </button>
                     <div class="status-msg" id="status-children"></div>
                 </div>
@@ -351,7 +351,7 @@
                         id="btn-classic"
                         onclick="startPayment('Classic Edition', 5000, 'btn-classic', 'status-classic')"
                     >
-                        Pre-Order This Edition
+                        Preorder at 5000 ₹
                     </button>
                     <div class="status-msg" id="status-classic"></div>
                 </div>
@@ -448,7 +448,7 @@
                 rzp.on("payment.failed", function (response) {
                     setStatus(statusId, "❌ Payment failed: " + response.error.description, "error");
                     btn.disabled = false;
-                    btn.textContent = "Pre-Order This Edition";
+                    btn.textContent = "Preorder at 5000 ₹";
                 });
 
                 rzp.open();
@@ -457,7 +457,7 @@
                 console.error(err);
                 setStatus(statusId, "❌ Something went wrong. Please try again.", "error");
                 btn.disabled = false;
-                btn.textContent = "Pre-Order This Edition";
+                btn.textContent = "Preorder at 5000 ₹";
             }
         }
     </script>
