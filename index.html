@@ -911,6 +911,7 @@ a{text-decoration:none;color:inherit}button{font:inherit;cursor:pointer}
     </div>
   </div>
 </section>
+<script src="amble-sound.js"></script>
 <script>
 (()=>{
 'use strict';
@@ -931,8 +932,8 @@ function createNoise(dur,type='white'){
   for(let i=0;i<d.length;i++){const t=i/d.length; d[i]=(Math.random()*2-1)*Math.pow(1-t, type==='crash'?0.75:1.35)}
   return b;
 }
-function playNote(note){const c=ctx;if(!c||c.state!=='running')return false;const now=c.currentTime;if(now-lastSound<.055)return false;lastSound=now;const o=c.createOscillator(),g=c.createGain();o.type='sine';o.frequency.setValueAtTime(notes[note]||440,now);g.gain.setValueAtTime(.0001,now);g.gain.exponentialRampToValueAtTime(.28,now+.012);g.gain.exponentialRampToValueAtTime(.0001,now+.42);o.connect(g);g.connect(c.destination);o.start();o.stop(now+.44);return true}
-function playDrum(type){const c=ctx;if(!c||c.state!=='running')return false;const now=c.currentTime;if(now-lastSound<.045)return false;lastSound=now;
+function playNote(note){const c=ctx;if(!c||c.state!=='running')return false;const now=c.currentTime;if(now-lastSound<.055)return false;lastSound=now;if(window.AmbleSound&&AmbleSound.note(c,note))return true;const o=c.createOscillator(),g=c.createGain();o.type='sine';o.frequency.setValueAtTime(notes[note]||440,now);g.gain.setValueAtTime(.0001,now);g.gain.exponentialRampToValueAtTime(.28,now+.012);g.gain.exponentialRampToValueAtTime(.0001,now+.42);o.connect(g);g.connect(c.destination);o.start();o.stop(now+.44);return true}
+function playDrum(type){const c=ctx;if(!c||c.state!=='running')return false;const now=c.currentTime;if(now-lastSound<.045)return false;lastSound=now;if(window.AmbleSound&&AmbleSound.drum(c,type))return true;
   if(type==='kick'||type==='tom1'||type==='tom2'){const base=type==='kick'?150:type==='tom1'?180:125;const o=c.createOscillator(),g=c.createGain();o.type='sine';o.frequency.setValueAtTime(base,now);o.frequency.exponentialRampToValueAtTime(type==='kick'?52:70,now+.16);g.gain.setValueAtTime(.0001,now);g.gain.exponentialRampToValueAtTime(.55,now+.006);g.gain.exponentialRampToValueAtTime(.0001,now+.26);o.connect(g);g.connect(c.destination);o.start();o.stop(now+.28);return true}
   if(type==='hihat'||type==='shaker'||type==='crash'){const dur=type==='crash'?.7:type==='shaker'?.18:.12,b=createNoise(dur,type==='crash'?'crash':'white'),n=c.createBufferSource(),f=c.createBiquadFilter(),g=c.createGain();f.type='highpass';f.frequency.setValueAtTime(type==='crash'?1800:5000,now);g.gain.setValueAtTime(type==='crash'?.18:.22,now);g.gain.exponentialRampToValueAtTime(.0001,now+dur);n.buffer=b;n.connect(f);f.connect(g);g.connect(c.destination);n.start();n.stop(now+dur);return true}
   if(type==='snare'){const b=createNoise(.22,'white'),n=c.createBufferSource(),f=c.createBiquadFilter(),g=c.createGain();f.type='bandpass';f.frequency.setValueAtTime(1800,now);f.Q.value=.7;g.gain.setValueAtTime(.0001,now);g.gain.exponentialRampToValueAtTime(.42,now+.005);g.gain.exponentialRampToValueAtTime(.0001,now+.2);n.buffer=b;n.connect(f);f.connect(g);g.connect(c.destination);n.start();n.stop(now+.22);const o=c.createOscillator(),og=c.createGain();o.type='triangle';o.frequency.setValueAtTime(190,now);og.gain.setValueAtTime(.0001,now);og.gain.exponentialRampToValueAtTime(.18,now+.005);og.gain.exponentialRampToValueAtTime(.0001,now+.11);o.connect(og);og.connect(c.destination);o.start();o.stop(now+.12);return true}
