@@ -76,18 +76,18 @@ function play(ctx,key,gain,rate,pan,rev){
 function usable(ctx){return !!ctx&&ctx.state==='running'}
 
 window.AmbleSound={
-  /* name: 'C4'..'C5'. Returns true when the sampled sound played. */
-  note:function(ctx,name){
+  /* name: 'C4'..'C5'; vol: optional 0..1. Returns true when the sampled sound played. */
+  note:function(ctx,name,vol){
     var n=NOTES[name];if(!usable(ctx)||!n)return false;
-    var v=.88+Math.random()*.12;
+    var v=(.88+Math.random()*.12)*(vol==null?1:vol);
     if(!play(ctx,n[0],.95*v,st(n[1]),n[4],.3))return false;
     play(ctx,n[2],.16*v,st(n[3]),n[4]*1.4,.45);
     return true;
   },
-  /* type: kick | snare | hihat | tom1 | tom2 | clap | crash | shaker */
-  drum:function(ctx,type){
+  /* type: kick | snare | hihat | tom1 | tom2 | clap | crash | shaker; vol: optional 0..1 */
+  drum:function(ctx,type,vol){
     var d=DRUMS[type];if(!usable(ctx)||!d)return false;
-    return play(ctx,type,d[0]*(.9+Math.random()*.1),1,d[2],d[1]);
+    return play(ctx,type,d[0]*(.9+Math.random()*.1)*(vol==null?1:vol),1,d[2],d[1]);
   },
   ready:function(){return !!buffers['piano-C4']}
 };
